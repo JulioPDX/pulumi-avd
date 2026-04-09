@@ -7,13 +7,13 @@ mgmt:
     ipv4-subnet: 172.16.1.0/24
 
 topology:
-  kinds:
-    arista_ceos:
-      image: ceos:4.35.1F
-      binds:
-        - interface_mapping.json:/mnt/flash/EosIntfMapping.json:ro
-      env:
-        CLAB_MGMT_VRF: MGMT
+    kinds:
+      arista_ceos:
+        image: ceos:4.35.1F
+        binds:
+          - interface_mapping.json:/mnt/flash/EosIntfMapping.json:ro
+        env:
+          CLAB_MGMT_VRF: MGMT
 
     defaults:
         kind: arista_ceos

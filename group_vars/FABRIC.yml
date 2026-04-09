@@ -10,6 +10,10 @@ overlay_routing_protocol: ebgp
 mgmt_gateway: 172.16.1.1
 mgmt_interface_vrf: MGMT
 
+# Management API HTTP
+management_eapi:
+  enabled: true
+
 # AAA Settings (AVD 6.x format)
 aaa_settings:
   local_users:
