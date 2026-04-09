@@ -1,3 +1,11 @@
 *.pyc
 venv/
 clab-lab/
+
+# AVD generated files
+intended/
+documentation/
+
+# Pulumi
+.pulumi/
+Pulumi.*.yaml
