@@ -1,16 +1,18 @@
+import pyeapi
 from pulumi.dynamic import (
+    CreateResult,
+    DiffResult,
     Resource,
     ResourceProvider,
-    CreateResult,
     UpdateResult,
-    DiffResult,
 )
-import pyeapi
 
 
 class EosConfigProvider(ResourceProvider):
     def _apply_config(self, host, username, password, config_text):
-        """Helper method to connect to EOS and apply config via pyeapi."""
+        """
+        Connect to EOS and apply config using config replace.
+        """
         # Create a connection to the switch
         connection = pyeapi.connect(
             transport="https",
@@ -20,15 +22,48 @@ class EosConfigProvider(ResourceProvider):
             return_node=True,
         )
 
+        # Use config replace via session
+        # First, create a unique session name
+        import time
+
+        session_name = f"pulumi-replace-{int(time.time())}"
+
+        # Start a config session
+        connection.config([f"configure session {session_name}"])
+
+        # Rollback to clean slate (removes all config)
+        connection.config(
+            [f"configure session {session_name}", "rollback clean-config"]
+        )
+
         # pyeapi expects a list of commands, so we split the AVD text file
         commands = [line.strip() for line in config_text.splitlines() if line.strip()]
 
-        # Push the configuration to the running-config
-        connection.config(commands)
+        # Apply the new configuration in the session
+        try:
+            # Build session config commands
+            session_commands = [f"configure session {session_name}"] + commands
+
+            # Apply config to session
+            connection.config(session_commands)
+
+            # Commit the session (this replaces the running config)
+            connection.config([f"configure session {session_name}", "commit"])
+
+        except Exception as e:
+            # If anything fails, abort the session
+            try:
+                connection.config(
+                    [f"configure session {session_name}", "abort"], format="text"
+                )
+            except Exception:
+                pass
+            raise e
 
     def diff(self, id: str, olds: dict, news: dict) -> DiffResult:
         """Tells Pulumi if the AVD config has changed since the last run."""
-        # Compare the config text stored in Pulumi's state (olds) vs the new AVD file (news)
+        # Compare config text stored in Pulumi's state (olds)
+        # vs the new AVD file (news)
         changed = olds.get("config_text") != news.get("config_text")
         return DiffResult(changes=changed)
 

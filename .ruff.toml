@@ -3,11 +3,8 @@
 # Use double quotes for strings
 quote-style = "double"
 
-# Use 4 spaces for indentation
-indent-width = 4
-
-# Maximum line length
-line-length = 88
+# Use spaces for indentation
+indent-style = "space"
 
 [lint]
 # Enable additional linting rules
@@ -21,3 +18,7 @@ select = [
 
 # Ignore specific rules
 ignore = []
+
+[lint.per-file-ignores]
+# Ignore import order in main
+"__main__.py" = ["E402"]

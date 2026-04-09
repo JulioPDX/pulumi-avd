@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A complete Python-based network automation solution using Arista AVD (Ansible Validated Designs) and Pulumi for infrastructure as code.
+A complete Python-based network automation solution using Arista AVD (Architect, Validate, Deploy) and Pulumi for infrastructure as code.
 
 ## 🎯 Overview
 
@@ -177,6 +177,7 @@ python build.py  # Standalone config generation
 - ✅ Idempotent deployments
 - ✅ State tracking
 - ✅ Diff detection
+- ✅ Config replace (not merge) - true declarative infrastructure
 - ✅ Rollback support
 - ✅ Infrastructure as Code
 
@@ -200,7 +201,8 @@ Useful for testing or CI/CD pipelines.
 Custom Pulumi dynamic provider that:
 
 - Connects to EOS devices via pyeapi
-- Applies configurations
+- Applies configurations using **config replace** (not merge)
+- Ensures device config exactly matches AVD output
 - Tracks changes for idempotency
 
 ## 📚 Resources
@@ -209,6 +211,7 @@ Custom Pulumi dynamic provider that:
 - [PyAVD Documentation](https://avd.arista.com/docs/pyavd/)
 - [Pulumi Documentation](https://www.pulumi.com/docs/)
 - [pyeapi Documentation](https://pyeapi.readthedocs.io/)
+- [Config Replace Mode](CONFIG_REPLACE.md) - Understanding config replace vs merge
 
 ## 🤝 Contributing
 
