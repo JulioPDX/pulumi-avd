@@ -1,0 +1,43 @@
+---
+# Fabric Name - must match the Ansible inventory group name
+fabric_name: FABRIC
+
+# Spine and Leaf Layer3 Routing
+underlay_routing_protocol: ebgp
+overlay_routing_protocol: ebgp
+
+# Management Interface
+mgmt_gateway: 172.16.1.1
+mgmt_interface_vrf: MGMT
+
+# AAA Settings (AVD 6.x format)
+aaa_settings:
+  local_users:
+    - name: admin
+      privilege: 15
+      role: network-admin
+      cleartext_password: admin
+  authorization:
+    exec:
+      default: local
+
+# NTP Settings (AVD 6.x format)
+ntp_settings:
+  servers:
+    - name: time.google.com
+      iburst: true
+
+# DNS Settings (AVD 6.x format)
+dns_settings:
+  servers:
+    - ip_address: 8.8.8.8
+    - ip_address: 8.8.4.4
+
+# EVPN Settings
+evpn_ebgp_multihop: 3
+
+# BFD Settings
+bfd_multihop:
+  interval: 300
+  min_rx: 300
+  multiplier: 3

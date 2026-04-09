@@ -1,0 +1,34 @@
+---
+name: lab
+prefix: ""
+
+mgmt:
+    network: custom_mgmt
+    ipv4-subnet: 172.16.1.0/24
+
+topology:
+    kinds:
+      arista_ceos:
+        image: ceos:4.35.1F
+        binds:
+          - interface_mapping.json:/mnt/flash/EosIntfMapping.json:ro
+        env:
+          CLAB_MGMT_VRF: MGMT
+
+    defaults:
+        kind: arista_ceos
+    nodes:
+        spine1:
+            mgmt-ipv4: 172.16.1.11
+        spine2:
+            mgmt-ipv4: 172.16.1.12
+        leaf1:
+            mgmt-ipv4: 172.16.1.101
+        leaf2:
+            mgmt-ipv4: 172.16.1.102
+    links:
+        # spines to a/b leafs
+        - endpoints: ["spine1:eth1", "leaf1:eth1"]
+        - endpoints: ["spine1:eth2", "leaf2:eth1"]
+        - endpoints: ["spine2:eth1", "leaf1:eth2"]
+        - endpoints: ["spine2:eth2", "leaf2:eth2"]

@@ -1,0 +1,36 @@
+---
+# Leaf Switches Configuration
+type: l3leaf
+
+# BGP Configuration - Each leaf gets unique AS for eBGP
+l3leaf:
+  defaults:
+    platform: cEOSLab
+    loopback_ipv4_pool: 10.255.0.0/27
+    loopback_ipv4_offset: 2
+    vtep_loopback_ipv4_pool: 10.255.1.0/27
+    uplink_interfaces: ['Ethernet1', 'Ethernet2']
+    uplink_switches: ['spine1', 'spine2']
+    uplink_ipv4_pool: 10.255.255.0/26
+    spanning_tree_mode: mstp
+    spanning_tree_priority: 16384
+    virtual_router_mac_address: 00:1c:73:00:00:01
+  node_groups:
+    - group: LEAF1
+      bgp_as: 65001
+      nodes:
+        - name: leaf1
+          id: 1
+          mgmt_ip: 172.16.1.101/24
+          uplink_switch_interfaces:
+            - Ethernet1
+            - Ethernet1
+    - group: LEAF2
+      bgp_as: 65002
+      nodes:
+        - name: leaf2
+          id: 2
+          mgmt_ip: 172.16.1.102/24
+          uplink_switch_interfaces:
+            - Ethernet2
+            - Ethernet2
