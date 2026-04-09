@@ -1,0 +1,23 @@
+# Ruff configuration for the project
+[format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Use 4 spaces for indentation
+indent-width = 4
+
+# Maximum line length
+line-length = 88
+
+[lint]
+# Enable additional linting rules
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+]
+
+# Ignore specific rules
+ignore = []

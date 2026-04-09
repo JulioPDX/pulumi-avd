@@ -1,22 +1,28 @@
-import pulumi
-from pulumi.dynamic import Resource, ResourceProvider, CreateResult, UpdateResult, DiffResult
+from pulumi.dynamic import (
+    Resource,
+    ResourceProvider,
+    CreateResult,
+    UpdateResult,
+    DiffResult,
+)
 import pyeapi
+
 
 class EosConfigProvider(ResourceProvider):
     def _apply_config(self, host, username, password, config_text):
         """Helper method to connect to EOS and apply config via pyeapi."""
         # Create a connection to the switch
         connection = pyeapi.connect(
-            transport='https',
-            host=host, 
-            username=username, 
-            password=password, 
-            return_node=True
+            transport="https",
+            host=host,
+            username=username,
+            password=password,
+            return_node=True,
         )
-        
+
         # pyeapi expects a list of commands, so we split the AVD text file
         commands = [line.strip() for line in config_text.splitlines() if line.strip()]
-        
+
         # Push the configuration to the running-config
         connection.config(commands)
 
@@ -28,21 +34,39 @@ class EosConfigProvider(ResourceProvider):
 
     def create(self, props: dict) -> CreateResult:
         """First time pushing config to this switch."""
-        self._apply_config(props['host'], props['username'], props['password'], props['config_text'])
+        self._apply_config(
+            props["host"], props["username"], props["password"], props["config_text"]
+        )
         # The 'id' tells Pulumi how to track this resource in its state file
-        return CreateResult(id_=props['host'], outs=props)
+        return CreateResult(id_=props["host"], outs=props)
 
     def update(self, id: str, olds: dict, news: dict) -> UpdateResult:
         """When AVD generates a new config, this updates the switch."""
-        self._apply_config(news['host'], news['username'], news['password'], news['config_text'])
+        self._apply_config(
+            news["host"], news["username"], news["password"], news["config_text"]
+        )
         return UpdateResult(outs=news)
+
 
 # This is the actual Pulumi Resource class you will call in your main program
 class EosDeviceConfig(Resource):
-    def __init__(self, name: str, host: str, username: str, password: str, config_text: str, opts=None):
-        super().__init__(EosConfigProvider(), name, {
-            'host': host,
-            'username': username,
-            'password': password,
-            'config_text': config_text,
-        }, opts)
+    def __init__(
+        self,
+        name: str,
+        host: str,
+        username: str,
+        password: str,
+        config_text: str,
+        opts=None,
+    ):
+        super().__init__(
+            EosConfigProvider(),
+            name,
+            {
+                "host": host,
+                "username": username,
+                "password": password,
+                "config_text": config_text,
+            },
+            opts,
+        )

@@ -1,17 +1,20 @@
 # Pulumi AVD - Pure Python Network Automation
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A complete Python-based network automation solution using Arista AVD (Ansible Validated Designs) and Pulumi for infrastructure as code.
 
 ## 🎯 Overview
 
 This project demonstrates how to:
+
 - Generate network device configurations using **PyAVD** (pure Python, no Ansible required)
 - Deploy configurations to Arista EOS devices using **Pulumi**
 - Manage infrastructure state with idempotent operations
 
 ## 🏗️ Architecture
 
-```
+```bash
 ┌─────────────────┐
 │  Inventory      │
 │  (YAML files)   │
@@ -19,20 +22,10 @@ This project demonstrates how to:
          │
          ▼
 ┌─────────────────┐
-│  build.py       │  ← PyAVD generates configs
-│  (PyAVD)        │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  intended/      │  ← Generated EOS configs
-│  configs/       │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  __main__.py    │  ← Pulumi deployment
-│  (Pulumi)       │
+│  __main__.py    │  ← Integrated: PyAVD + Pulumi
+│                 │     1. Generate configs (PyAVD)
+│  [PyAVD Build]  │     2. Deploy configs (Pulumi)
+│  [Pulumi Deploy]│
 └────────┬────────┘
          │
          ▼
@@ -41,9 +34,11 @@ This project demonstrates how to:
 └─────────────────┘
 ```
 
+**Key Feature**: `pulumi up` automatically generates fresh configs before deployment!
+
 ## 📁 Project Structure
 
-```
+```bash
 .
 ├── build.py                  # PyAVD build script (generates configs)
 ├── __main__.py               # Pulumi main program (deploys configs)
@@ -53,9 +48,12 @@ This project demonstrates how to:
 │   ├── FABRIC.yml           # Fabric-wide settings
 │   ├── SPINES.yml           # Spine configuration
 │   └── LEAFS.yml            # Leaf configuration
-└── intended/                 # Generated outputs
-    ├── configs/             # EOS CLI configs (.cfg)
-    └── structured_configs/  # Structured YAML configs
+├── intended/                 # Generated outputs
+│   ├── configs/             # EOS CLI configs (.cfg)
+│   └── structured_configs/  # Structured YAML configs
+├── Makefile                  # Convenience commands
+├── LICENSE                   # MIT License
+└── README.md                 # This file
 ```
 
 ## 🚀 Quick Start
@@ -63,44 +61,42 @@ This project demonstrates how to:
 ### 1. Install Dependencies
 
 ```bash
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
-pip install "pyavd[ansible]==6.1.0" pulumi pyeapi pyyaml
+pip install "pyavd[ansible]==6.1.0" pulumi pyeapi
 ```
 
 Or use the Makefile:
+
 ```bash
 make install
 ```
 
-### 2. Generate Configurations
+### 2. Deploy Everything with One Command!
+
+```bash
+export PULUMI_CONFIG_PASSPHRASE=""
+pulumi login --local
+pulumi up
+# OR
+make deploy
+```
+
+**That's it!** The `pulumi up` command now:
+
+1. ✅ Automatically generates AVD configs using PyAVD
+1. ✅ Deploys configs to EOS devices
+1. ✅ Tracks state for idempotent operations
+
+### 3. (Optional) Generate Configs Only
+
+If you want to generate configs without deploying:
 
 ```bash
 python build.py
 # OR
 make build
 ```
-
-This will:
-- Load inventory and group_vars
-- Generate AVD facts
-- Create structured configs in `intended/structured_configs/`
-- Create EOS CLI configs in `intended/configs/`
-
-### 3. Deploy with Pulumi
-
-```bash
-export PULUMI_CONFIG_PASSPHRASE=""
-pulumi up
-# OR
-make deploy
-```
-
-This will:
-- Read generated configs from `intended/configs/`
-- Connect to devices via pyeapi
-- Apply configurations to EOS devices
-- Track state for idempotent operations
 
 ### 🎯 Makefile Shortcuts
 
@@ -119,6 +115,7 @@ make clean          # Remove generated files
 ### Topology
 
 The default topology includes:
+
 - **2 Spine switches** (AS 65100)
 - **2 Leaf switches** (AS 65001, 65002)
 - **eBGP** underlay and overlay
@@ -128,6 +125,7 @@ The default topology includes:
 ### Customization
 
 Edit the YAML files in `group_vars/` to customize:
+
 - BGP AS numbers
 - IP addressing
 - VXLAN settings
@@ -136,13 +134,13 @@ Edit the YAML files in `group_vars/` to customize:
 
 ## 📖 Workflow
 
-### Development Workflow
+### Simplified Workflow (Integrated Build)
 
 1. **Modify inventory/group_vars** - Define your network topology
-2. **Run build.py** - Generate configurations
-3. **Review configs** - Check `intended/configs/`
-4. **Run pulumi preview** - See what will change
-5. **Run pulumi up** - Deploy to devices
+1. **Run `pulumi preview`** - Configs auto-generate, preview changes
+1. **Run `pulumi up`** - Configs auto-generate and deploy!
+
+That's it! The build step is integrated into Pulumi.
 
 ### Continuous Operations
 
@@ -150,19 +148,24 @@ Edit the YAML files in `group_vars/` to customize:
 # Make changes to group_vars
 vim group_vars/FABRIC.yml
 
-# Regenerate configs
-python build.py
+# Preview and deploy (auto-generates configs)
+export PULUMI_CONFIG_PASSPHRASE=""
+pulumi preview  # Auto-builds and shows diff
+pulumi up       # Auto-builds and deploys
+```
 
-# Preview changes
-pulumi preview
+### Manual Build (Optional)
 
-# Deploy
-pulumi up
+If you want to generate configs without Pulumi:
+
+```bash
+python build.py  # Standalone config generation
 ```
 
 ## ✨ Features
 
 ### PyAVD (Configuration Generation)
+
 - ✅ Pure Python - No Ansible required
 - ✅ Schema validation
 - ✅ Structured config generation
@@ -170,6 +173,7 @@ pulumi up
 - ✅ Fast execution
 
 ### Pulumi (Deployment)
+
 - ✅ Idempotent deployments
 - ✅ State tracking
 - ✅ Diff detection
@@ -178,14 +182,23 @@ pulumi up
 
 ## 🔍 Key Files
 
-### build.py
-Pure Python script using PyAVD to generate configurations without Ansible.
+### `__main__.py`
 
-### __main__.py
-Pulumi program that reads generated configs and deploys them to devices.
+**Integrated Pulumi + PyAVD program** that:
 
-### eos_provider.py
+1. Generates fresh configs using PyAVD (no Ansible!)
+1. Deploys configs to devices using Pulumi
+1. Provides a single command workflow: `pulumi up`
+
+### `build.py` (Optional)
+
+Standalone Python script for generating configs without deployment.
+Useful for testing or CI/CD pipelines.
+
+### `eos_provider.py`
+
 Custom Pulumi dynamic provider that:
+
 - Connects to EOS devices via pyeapi
 - Applies configurations
 - Tracks changes for idempotency
@@ -203,4 +216,4 @@ This is a reference implementation. Feel free to adapt for your use case!
 
 ## 📄 License
 
-Apache 2.0
+MIT
