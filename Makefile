@@ -10,7 +10,7 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
 install: ## Install Python dependencies
-	pip install -r requirements.txt
+	pip install -r requirements.txt && ansible-galaxy collection install arista.avd:=6.1.0
 
 build: ## Generate AVD configurations using PyAVD
 	@echo "🚀 Building configurations with PyAVD..."
@@ -65,5 +65,17 @@ lint: ## Lint Python files with ruff
 lint-fix: ## Lint and fix Python files
 	@echo "🔧 Linting and fixing Python files..."
 	@ruff check *.py --fix
+
+deploy-direct: build ## Deploy configs directly to devices (without Pulumi)
+	@echo "🚀 Deploying directly to devices..."
+	@python deploy.py
+
+deploy-direct-dry: build ## Dry-run deployment (show what would be deployed)
+	@echo "👀 Dry-run deployment..."
+	@python deploy.py --dry-run
+
+deploy-device: ## Deploy to specific device(s) - Usage: make deploy-device DEVICES="leaf1 leaf2"
+	@echo "🚀 Deploying to specific device(s)..."
+	@python deploy.py --devices $(DEVICES)
 
 .DEFAULT_GOAL := help

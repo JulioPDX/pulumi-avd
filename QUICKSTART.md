@@ -1,11 +1,36 @@
 # Quick Start Guide
 
-## 🚀 One-Command Deployment
+## Deploy Lab Topology
+
+```bash
+clab deploy -t topo.yml
+```
+
+## Create .envrc File
 
 ```bash
 export PULUMI_CONFIG_PASSPHRASE=""
+export CV_SERVER="www.cv-staging.corp.arista.io"
+export CV_TOKEN="my_token"
+```
+
+```bash
+source .envrc
+# or
+direnv allow .envrc
+```
+
+## Install Dependencies
+
+```bash
+make install
+```
+
+## Deploy Everything
+
+```bash
 pulumi login --local
-pulumi up
+pulumi up -y
 ```
 
 **That's it!** This single command:

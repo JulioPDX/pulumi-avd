@@ -1,0 +1,12 @@
+---
+- name: Deploy Configurations via CloudVision
+  hosts: FABRIC
+  gather_facts: false
+  connection: local
+  tasks:
+    - name: Deploy Configurations via CloudVision
+      ansible.builtin.import_role:
+        name: arista.avd.cv_deploy
+      vars:
+        cv_server: "{{ lookup ('env', 'CV_SERVER') | default('www.cv-staging.corp.arista.io') }}"
+        cv_token: "{{ lookup ('env', 'CV_TOKEN') | default('') }}"

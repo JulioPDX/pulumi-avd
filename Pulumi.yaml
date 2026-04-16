@@ -5,7 +5,6 @@ runtime:
   options:
     toolchain: pip
     virtualenv: venv
-    main: __main_cv__.py
 config:
   pulumi:tags:
     value:

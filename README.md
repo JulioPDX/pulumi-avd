@@ -9,8 +9,10 @@ A complete Python-based network automation solution using Arista AVD (Architect,
 This project demonstrates how to:
 
 - Generate network device configurations using **PyAVD** (pure Python, no Ansible required)
-- Deploy configurations to Arista EOS devices using **Pulumi**
-- Two deployment methods: **Direct to device** (pyeapi) or **via CloudVision** (cv_workflow)
+- Deploy configurations to Arista EOS devices using **Pulumi** or standalone **deploy.py**
+- Three deployment options:
+  - **Pulumi + pyeapi** (state-managed, direct to device)
+  - **deploy.py** (standalone, no Pulumi required)
 - Manage infrastructure state with idempotent operations
 
 ## 🏗️ Architecture
@@ -42,21 +44,20 @@ This project demonstrates how to:
 ```bash
 .
 ├── build.py                  # PyAVD build script (generates configs)
+├── deploy.py                 # Direct deployment script (no Pulumi)
 ├── __main__.py               # Pulumi main (direct to device)
-├── __main_cv__.py            # Pulumi main (via CloudVision)
 ├── eos_provider.py           # Direct deployment provider
-├── cv_provider.py            # CloudVision deployment provider
 ├── inventory.yml             # Device inventory
 ├── group_vars/               # AVD configuration variables
 │   ├── FABRIC.yml           # Fabric-wide settings
 │   ├── SPINES.yml           # Spine configuration
-│   └── LEAFS.yml            # Leaf configuration
+│   ├── LEAFS.yml            # Leaf configuration
+│   └── NETWORK_SERVICES.yml # Network services (VLANs, VRFs, SVIs)
 ├── intended/                 # Generated outputs
 │   ├── configs/             # EOS CLI configs (.cfg)
 │   └── structured_configs/  # Structured YAML configs
 ├── Makefile                  # Convenience commands
 ├── LICENSE                   # MIT License
-├── DEPLOYMENT_METHODS.md     # Deployment methods comparison
 └── README.md                 # This file
 ```
 
@@ -68,6 +69,10 @@ This project demonstrates how to:
 python3 -m venv venv
 source venv/bin/activate
 pip install "pyavd[ansible]==6.1.0" pulumi pyeapi
+```
+
+```bash
+ansible-galaxy collection install arista.avd:=6.1.0
 ```
 
 Or use the Makefile:
@@ -153,7 +158,6 @@ That's it! The build step is integrated into Pulumi.
 vim group_vars/FABRIC.yml
 
 # Preview and deploy (auto-generates configs)
-export PULUMI_CONFIG_PASSPHRASE=""
 pulumi preview  # Auto-builds and shows diff
 pulumi up       # Auto-builds and deploys
 ```
@@ -195,43 +199,6 @@ python build.py  # Standalone config generation
 
 - `__main__.py` - Deploys directly to devices via pyeapi
 - `eos_provider.py` - Provider for direct device deployment
-
-#### CloudVision Workflow (Enterprise)
-
-- `__main_cv__.py` - Deploys via CloudVision Portal
-- `cv_provider.py` - Provider for CloudVision deployment
-
-See [DEPLOYMENT_METHODS.md](DEPLOYMENT_METHODS.md) for detailed comparison.
-
-### `build.py` (Optional)
-
-Standalone Python script for generating configs without deployment.
-Useful for testing or CI/CD pipelines.
-
-### Provider Details
-
-**`eos_provider.py`** (Direct):
-
-- Connects to EOS devices via pyeapi
-- Applies configurations using **config replace** (not merge)
-- Ensures device config exactly matches AVD output
-- Tracks changes for idempotency
-
-**`cv_provider.py`** (CloudVision):
-
-- Deploys via CloudVision Portal
-- Uses PyAVD's cv_workflow module
-- Provides change control and approval workflows
-- Automated rollback and compliance tracking
-
-## 📚 Resources
-
-- [Arista AVD Documentation](https://avd.arista.com/)
-- [PyAVD Documentation](https://avd.arista.com/docs/pyavd/)
-- [Pulumi Documentation](https://www.pulumi.com/docs/)
-- [pyeapi Documentation](https://pyeapi.readthedocs.io/)
-- [Deployment Methods](DEPLOYMENT_METHODS.md) - Direct vs CloudVision deployment
-- [Config Replace Mode](CONFIG_REPLACE.md) - Understanding config replace vs merge (direct method)
 
 ## 🤝 Contributing
 

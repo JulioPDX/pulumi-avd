@@ -32,3 +32,9 @@ Thumbs.db
 
 # Logs
 *.log
+
+# env file
+.envrc
+
+# backups
+config_backup/
