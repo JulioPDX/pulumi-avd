@@ -1,0 +1,89 @@
+Device,Test Name,Test Status,Message(s),Test description,Test category
+pulumi-leaf1,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 40,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
+pulumi-leaf1,VerifyLoggingErrors,failure,"Device has reported syslog messages with a severity of ERRORS or higher:
+Apr 16 21:55:53 pulumi-leaf1 NorCalInit: %HARDWARE-0-SYSTEM_IDENTIFICATION_FAILED: Failed to identify this system
+ 
+",Verifies there are no syslog messages with a severity of ERRORS or higher.,Logging
+pulumi-leaf2,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 39,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
+pulumi-spine1,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 38,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
+pulumi-spine1,VerifyLoggingErrors,failure,"Device has reported syslog messages with a severity of ERRORS or higher:
+Apr 16 21:55:53 pulumi-spine1 NorCalInit: %HARDWARE-0-SYSTEM_IDENTIFICATION_FAILED: Failed to identify this system
+ 
+",Verifies there are no syslog messages with a severity of ERRORS or higher.,Logging
+pulumi-spine2,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 39,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
+pulumi-leaf1,VerifyBGPPeerSession,success,,Verifies the session state of BGP peers.,BGP
+pulumi-leaf1,VerifyRunningConfigDiffs,success,,Verifies there is no difference between the running-config and the startup-config.,Configuration
+pulumi-leaf1,VerifyZeroTouch,success,,Verifies ZeroTouch is disabled.,Configuration
+pulumi-leaf1,VerifyLLDPNeighbors,success,,Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.,Connectivity
+pulumi-leaf1,VerifyReachability,success,,Verifies point-to-point reachability between Ethernet interfaces.,Connectivity
+pulumi-leaf1,VerifyInterfaceErrDisabled,success,,Verifies there are no interfaces in the errdisabled state.,Interfaces
+pulumi-leaf1,VerifyInterfaceErrors,success,,Verifies that the interfaces error counters are equal to zero.,Interfaces
+pulumi-leaf1,VerifyInterfaceUtilization,success,,Verifies that the utilization of interfaces is below a certain threshold.,Interfaces
+pulumi-leaf1,VerifyInterfacesStatus,success,,Verifies the operational states of specified interfaces to ensure they match expected configurations.,Interfaces
+pulumi-leaf1,VerifyRoutingProtocolModel,success,,Verifies the configured routing protocol model.,Routing
+pulumi-leaf1,VerifySTPCounters,success,,Verifies there is no errors in STP BPDU packets.,STP
+pulumi-leaf1,VerifyAgentLogs,success,,Verifies there are no agent crash reports.,System
+pulumi-leaf1,VerifyCoredump,success,,Verifies there are no core dump files.,System
+pulumi-leaf1,VerifyFileSystemUtilization,success,,Verifies that no partition is utilizing more than 75% of its disk space.,System
+pulumi-leaf1,VerifyMaintenance,success,,Verifies that the device is not currently under or entering maintenance.,System
+pulumi-leaf1,VerifyMemoryUtilization,success,,Verifies whether the memory utilization is below 75%.,System
+pulumi-leaf1,VerifyNTP,success,,Verifies if NTP is synchronised.,System
+pulumi-leaf1,VerifyReloadCause,success,,Verifies the last reload cause of the device.,System
+pulumi-leaf1,VerifyVxlanConfigSanity,success,,Verifies there are no VXLAN config-sanity inconsistencies.,VXLAN
+pulumi-leaf2,VerifyBGPPeerSession,success,,Verifies the session state of BGP peers.,BGP
+pulumi-leaf2,VerifyRunningConfigDiffs,success,,Verifies there is no difference between the running-config and the startup-config.,Configuration
+pulumi-leaf2,VerifyZeroTouch,success,,Verifies ZeroTouch is disabled.,Configuration
+pulumi-leaf2,VerifyLLDPNeighbors,success,,Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.,Connectivity
+pulumi-leaf2,VerifyReachability,success,,Verifies point-to-point reachability between Ethernet interfaces.,Connectivity
+pulumi-leaf2,VerifyInterfaceErrDisabled,success,,Verifies there are no interfaces in the errdisabled state.,Interfaces
+pulumi-leaf2,VerifyInterfaceErrors,success,,Verifies that the interfaces error counters are equal to zero.,Interfaces
+pulumi-leaf2,VerifyInterfaceUtilization,success,,Verifies that the utilization of interfaces is below a certain threshold.,Interfaces
+pulumi-leaf2,VerifyInterfacesStatus,success,,Verifies the operational states of specified interfaces to ensure they match expected configurations.,Interfaces
+pulumi-leaf2,VerifyLoggingErrors,success,,Verifies there are no syslog messages with a severity of ERRORS or higher.,Logging
+pulumi-leaf2,VerifyRoutingProtocolModel,success,,Verifies the configured routing protocol model.,Routing
+pulumi-leaf2,VerifySTPCounters,success,,Verifies there is no errors in STP BPDU packets.,STP
+pulumi-leaf2,VerifyAgentLogs,success,,Verifies there are no agent crash reports.,System
+pulumi-leaf2,VerifyCoredump,success,,Verifies there are no core dump files.,System
+pulumi-leaf2,VerifyFileSystemUtilization,success,,Verifies that no partition is utilizing more than 75% of its disk space.,System
+pulumi-leaf2,VerifyMaintenance,success,,Verifies that the device is not currently under or entering maintenance.,System
+pulumi-leaf2,VerifyMemoryUtilization,success,,Verifies whether the memory utilization is below 75%.,System
+pulumi-leaf2,VerifyNTP,success,,Verifies if NTP is synchronised.,System
+pulumi-leaf2,VerifyReloadCause,success,,Verifies the last reload cause of the device.,System
+pulumi-leaf2,VerifyVxlanConfigSanity,success,,Verifies there are no VXLAN config-sanity inconsistencies.,VXLAN
+pulumi-spine1,VerifyBGPPeerSession,success,,Verifies the session state of BGP peers.,BGP
+pulumi-spine1,VerifyRunningConfigDiffs,success,,Verifies there is no difference between the running-config and the startup-config.,Configuration
+pulumi-spine1,VerifyZeroTouch,success,,Verifies ZeroTouch is disabled.,Configuration
+pulumi-spine1,VerifyLLDPNeighbors,success,,Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.,Connectivity
+pulumi-spine1,VerifyReachability,success,,Verifies point-to-point reachability between Ethernet interfaces.,Connectivity
+pulumi-spine1,VerifyInterfaceErrDisabled,success,,Verifies there are no interfaces in the errdisabled state.,Interfaces
+pulumi-spine1,VerifyInterfaceErrors,success,,Verifies that the interfaces error counters are equal to zero.,Interfaces
+pulumi-spine1,VerifyInterfaceUtilization,success,,Verifies that the utilization of interfaces is below a certain threshold.,Interfaces
+pulumi-spine1,VerifyInterfacesStatus,success,,Verifies the operational states of specified interfaces to ensure they match expected configurations.,Interfaces
+pulumi-spine1,VerifyRoutingProtocolModel,success,,Verifies the configured routing protocol model.,Routing
+pulumi-spine1,VerifySTPCounters,success,,Verifies there is no errors in STP BPDU packets.,STP
+pulumi-spine1,VerifyAgentLogs,success,,Verifies there are no agent crash reports.,System
+pulumi-spine1,VerifyCoredump,success,,Verifies there are no core dump files.,System
+pulumi-spine1,VerifyFileSystemUtilization,success,,Verifies that no partition is utilizing more than 75% of its disk space.,System
+pulumi-spine1,VerifyMaintenance,success,,Verifies that the device is not currently under or entering maintenance.,System
+pulumi-spine1,VerifyMemoryUtilization,success,,Verifies whether the memory utilization is below 75%.,System
+pulumi-spine1,VerifyNTP,success,,Verifies if NTP is synchronised.,System
+pulumi-spine1,VerifyReloadCause,success,,Verifies the last reload cause of the device.,System
+pulumi-spine2,VerifyBGPPeerSession,success,,Verifies the session state of BGP peers.,BGP
+pulumi-spine2,VerifyRunningConfigDiffs,success,,Verifies there is no difference between the running-config and the startup-config.,Configuration
+pulumi-spine2,VerifyZeroTouch,success,,Verifies ZeroTouch is disabled.,Configuration
+pulumi-spine2,VerifyLLDPNeighbors,success,,Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.,Connectivity
+pulumi-spine2,VerifyReachability,success,,Verifies point-to-point reachability between Ethernet interfaces.,Connectivity
+pulumi-spine2,VerifyInterfaceErrDisabled,success,,Verifies there are no interfaces in the errdisabled state.,Interfaces
+pulumi-spine2,VerifyInterfaceErrors,success,,Verifies that the interfaces error counters are equal to zero.,Interfaces
+pulumi-spine2,VerifyInterfaceUtilization,success,,Verifies that the utilization of interfaces is below a certain threshold.,Interfaces
+pulumi-spine2,VerifyInterfacesStatus,success,,Verifies the operational states of specified interfaces to ensure they match expected configurations.,Interfaces
+pulumi-spine2,VerifyLoggingErrors,success,,Verifies there are no syslog messages with a severity of ERRORS or higher.,Logging
+pulumi-spine2,VerifyRoutingProtocolModel,success,,Verifies the configured routing protocol model.,Routing
+pulumi-spine2,VerifySTPCounters,success,,Verifies there is no errors in STP BPDU packets.,STP
+pulumi-spine2,VerifyAgentLogs,success,,Verifies there are no agent crash reports.,System
+pulumi-spine2,VerifyCoredump,success,,Verifies there are no core dump files.,System
+pulumi-spine2,VerifyFileSystemUtilization,success,,Verifies that no partition is utilizing more than 75% of its disk space.,System
+pulumi-spine2,VerifyMaintenance,success,,Verifies that the device is not currently under or entering maintenance.,System
+pulumi-spine2,VerifyMemoryUtilization,success,,Verifies whether the memory utilization is below 75%.,System
+pulumi-spine2,VerifyNTP,success,,Verifies if NTP is synchronised.,System
+pulumi-spine2,VerifyReloadCause,success,,Verifies the last reload cause of the device.,System
