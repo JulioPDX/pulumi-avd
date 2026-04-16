@@ -1,8 +1,14 @@
-import pulumi
+"""
+Pulumi AVD - CloudVision Deployment
+Uses cv_workflow from PyAVD to deploy via CloudVision instead of direct device access
+"""
+
+import hashlib
 import os
+import pulumi
 import yaml
 from pathlib import Path
-from eos_provider import EosDeviceConfig
+from cv_provider import CloudVisionDeployment
 from pyavd import (
     get_avd_facts,
     get_device_structured_config,
@@ -92,6 +98,15 @@ def build_all_inputs(devices):
     return all_inputs
 
 
+def calculate_config_hash():
+    """Calculate hash of all generated configs for change detection"""
+    hasher = hashlib.sha256()
+    for config_file in sorted(CONFIGS_DIR.glob("*.cfg")):
+        with open(config_file, "rb") as f:
+            hasher.update(f.read())
+    return hasher.hexdigest()
+
+
 # Load inventory and build inputs
 devices = load_inventory()
 all_inputs = build_all_inputs(devices)
@@ -123,39 +138,32 @@ for hostname in devices.keys():
 print(f"✅ Generated configs for {len(devices)} devices")
 
 # ============================================================================
-# Step 2: Deploy Configurations with Pulumi
+# Step 2: Deploy Configurations via CloudVision
 # ============================================================================
 
-print("🚀 Deploying configurations with Pulumi...")
+print("☁️  Deploying configurations via CloudVision...")
 
-# Switch credentials (in production, use pulumi.Config() to pull these securely from secrets)
-EOS_USER = "admin"
-EOS_PASS = "admin"
+# CloudVision configuration (use pulumi.Config() for production)
+CV_SERVER = os.environ.get("CV_SERVER", "https://www.cv-staging.corp.arista.io")
+CV_TOKEN = os.environ.get("CV_TOKEN", "")
+WORKSPACE_NAME = "pulumi-avd-workspace"
 
-# List to keep track of managed device names for output
-managed_devices = []
+# Calculate config hash for change detection
+config_hash = calculate_config_hash()
 
-# Iterate over every AVD generated config file
-for filename in os.listdir(CONFIGS_DIR):
-    if filename.endswith(".cfg"):
-        hostname = filename.replace(".cfg", "")
-        managed_devices.append(hostname)
+# Deploy via CloudVision
+cv_deployment = CloudVisionDeployment(
+    "avd-cv-deployment",
+    cv_server=CV_SERVER,
+    cv_token=CV_TOKEN,
+    workspace_name=WORKSPACE_NAME,
+    inventory_path=str(INVENTORY_FILE),
+    config_hash=config_hash,
+)
 
-        # Read the configuration AVD generated
-        filepath = os.path.join(CONFIGS_DIR, filename)
-        with open(filepath, "r") as f:
-            intended_config = f.read()
-
-        # Invoke our Custom Pulumi Resource!
-        # Pulumi will check if this config text matches what is currently
-        # deployed. If not, it will connect via pyeapi and push the diff.
-        EosDeviceConfig(
-            f"avd-config-{hostname}",
-            host=hostname,  # Assuming DNS is resolvable. If not, map to IPs.
-            username=EOS_USER,
-            password=EOS_PASS,
-            config_text=intended_config,
-        )
-
-# Export the list of managed switches to the CLI output
-pulumi.export("active_switches", managed_devices)
+# Export deployment info
+pulumi.export("deployment_method", "CloudVision")
+pulumi.export("workspace_name", WORKSPACE_NAME)
+pulumi.export("config_hash", config_hash)
+pulumi.export("devices_count", len(devices))
+pulumi.export("devices", list(devices.keys()))

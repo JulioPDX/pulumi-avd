@@ -8,28 +8,28 @@ enable_password:
   disabled: true
 ethernet_interfaces:
 - name: Ethernet1
-  description: P2P_leaf1_Ethernet2
+  description: P2P_pulumi-leaf1_Ethernet2
   shutdown: false
   mtu: 9214
   ip_address: 10.255.255.2/31
   metadata:
-    peer: leaf1
+    peer: pulumi-leaf1
     peer_interface: Ethernet2
     peer_type: l3leaf
   switchport:
     enabled: false
 - name: Ethernet2
-  description: P2P_leaf2_Ethernet2
+  description: P2P_pulumi-leaf2_Ethernet2
   shutdown: false
   mtu: 9214
   ip_address: 10.255.255.6/31
   metadata:
-    peer: leaf2
+    peer: pulumi-leaf2
     peer_interface: Ethernet2
     peer_type: l3leaf
   switchport:
     enabled: false
-hostname: spine2
+hostname: pulumi-spine2
 ip_domain_lookup:
   source_interfaces:
   - name: Management1
@@ -45,7 +45,7 @@ local_users:
 - name: admin
   privilege: 15
   role: network-admin
-  sha512_password: $6$86c25800735464c1$wpHn5BO0gomqNcM8kK34U5mQy0A.N3n/HcCsZwzQ44/tEGsjbH6DJEHHCUhHHzRSHMnWEEBj7xys0KsLsCL2r0
+  sha512_password: $6$b4fa912571264f74$Kf0mBIbLaub4M5Kq4BelJC7n13ezmRK7WjdzmiwPKhd6B7PqNk5yoEWYMxP8hu6XWoS8NsKezFSa1msCzYbIv/
 loopback_interfaces:
 - name: Loopback0
   description: ROUTER_ID
@@ -123,26 +123,26 @@ router_bgp:
     peer_group: IPv4-UNDERLAY-PEERS
     remote_as: '65001'
     metadata:
-      peer: leaf1
-    description: leaf1_Ethernet2
+      peer: pulumi-leaf1
+    description: pulumi-leaf1_Ethernet2
   - ip_address: 10.255.255.7
     peer_group: IPv4-UNDERLAY-PEERS
     remote_as: '65002'
     metadata:
-      peer: leaf2
-    description: leaf2_Ethernet2
+      peer: pulumi-leaf2
+    description: pulumi-leaf2_Ethernet2
   - ip_address: 10.255.0.3
     peer_group: EVPN-OVERLAY-PEERS
     remote_as: '65001'
     metadata:
-      peer: leaf1
-    description: leaf1_Loopback0
+      peer: pulumi-leaf1
+    description: pulumi-leaf1_Loopback0
   - ip_address: 10.255.0.4
     peer_group: EVPN-OVERLAY-PEERS
     remote_as: '65002'
     metadata:
-      peer: leaf2
-    description: leaf2_Loopback0
+      peer: pulumi-leaf2
+    description: pulumi-leaf2_Loopback0
   redistribute:
     connected:
       enabled: true

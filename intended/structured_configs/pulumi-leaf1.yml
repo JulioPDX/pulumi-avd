@@ -8,28 +8,28 @@ enable_password:
   disabled: true
 ethernet_interfaces:
 - name: Ethernet1
-  description: P2P_spine1_Ethernet1
+  description: P2P_pulumi-spine1_Ethernet1
   shutdown: false
   mtu: 9214
   ip_address: 10.255.255.1/31
   metadata:
-    peer: spine1
+    peer: pulumi-spine1
     peer_interface: Ethernet1
     peer_type: spine
   switchport:
     enabled: false
 - name: Ethernet2
-  description: P2P_spine2_Ethernet1
+  description: P2P_pulumi-spine2_Ethernet1
   shutdown: false
   mtu: 9214
   ip_address: 10.255.255.3/31
   metadata:
-    peer: spine2
+    peer: pulumi-spine2
     peer_interface: Ethernet1
     peer_type: spine
   switchport:
     enabled: false
-hostname: leaf1
+hostname: pulumi-leaf1
 ip_domain_lookup:
   source_interfaces:
   - name: Management1
@@ -48,7 +48,7 @@ local_users:
 - name: admin
   privilege: 15
   role: network-admin
-  sha512_password: $6$9334ee85e63a6df2$9gu9bIpZ39eQwJpdvnmEpPObk4BPRcg9rE.drNR.iuyZKNJJhWqlnk86kH9Ly24wlF8gi.pyimL9cxHUQb3SY.
+  sha512_password: $6$eb3b036bb900a558$QHKUhC3Rb04bI5PV/0CQyM5ADuXUbf5xSU6K.LenMjIGovE7qqmoPE1pfZ0wZS7P1SJSqnyIi5NqIMPDrBmXX0
 loopback_interfaces:
 - name: Loopback0
   description: ROUTER_ID
@@ -131,26 +131,26 @@ router_bgp:
     peer_group: IPv4-UNDERLAY-PEERS
     remote_as: '65100'
     metadata:
-      peer: spine1
-    description: spine1_Ethernet1
+      peer: pulumi-spine1
+    description: pulumi-spine1_Ethernet1
   - ip_address: 10.255.255.2
     peer_group: IPv4-UNDERLAY-PEERS
     remote_as: '65100'
     metadata:
-      peer: spine2
-    description: spine2_Ethernet1
+      peer: pulumi-spine2
+    description: pulumi-spine2_Ethernet1
   - ip_address: 10.255.0.1
     peer_group: EVPN-OVERLAY-PEERS
     remote_as: '65100'
     metadata:
-      peer: spine1
-    description: spine1_Loopback0
+      peer: pulumi-spine1
+    description: pulumi-spine1_Loopback0
   - ip_address: 10.255.0.2
     peer_group: EVPN-OVERLAY-PEERS
     remote_as: '65100'
     metadata:
-      peer: spine2
-    description: spine2_Loopback0
+      peer: pulumi-spine2
+    description: pulumi-spine2_Loopback0
   redistribute:
     connected:
       enabled: true
@@ -186,7 +186,7 @@ vrfs:
   ip_routing: false
 vxlan_interface:
   vxlan1:
-    description: leaf1_VTEP
+    description: pulumi-leaf1_VTEP
     vxlan:
       source_interface: Loopback1
       udp_port: 4789

@@ -55,8 +55,30 @@ def merge_group_vars(hostname, group):
     group_file = GROUP_VARS_DIR / f"{group}.yml"
     group_vars = load_yaml(group_file) if group_file.exists() else {}
 
-    # Merge: fabric_vars + group_vars
+    # Load NETWORK_SERVICES vars (if exists)
+    network_services_file = GROUP_VARS_DIR / "NETWORK_SERVICES.yml"
+    network_services_vars = (
+        load_yaml(network_services_file) if network_services_file.exists() else {}
+    )
+
+    # Merge: fabric_vars + group_vars + network_services_vars
+    # Network services should be merged carefully to preserve lists
     merged = {**fabric_vars, **group_vars}
+
+    # Merge network services (tenants, etc.)
+    if network_services_vars:
+        for key, value in network_services_vars.items():
+            if (
+                key in merged
+                and isinstance(merged[key], list)
+                and isinstance(value, list)
+            ):
+                # Merge lists (like tenants)
+                merged[key].extend(value)
+            else:
+                # Override or add new keys
+                merged[key] = value
+
     merged["inventory_hostname"] = hostname
 
     return merged

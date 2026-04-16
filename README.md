@@ -10,6 +10,7 @@ This project demonstrates how to:
 
 - Generate network device configurations using **PyAVD** (pure Python, no Ansible required)
 - Deploy configurations to Arista EOS devices using **Pulumi**
+- Two deployment methods: **Direct to device** (pyeapi) or **via CloudVision** (cv_workflow)
 - Manage infrastructure state with idempotent operations
 
 ## 🏗️ Architecture
@@ -41,8 +42,10 @@ This project demonstrates how to:
 ```bash
 .
 ├── build.py                  # PyAVD build script (generates configs)
-├── __main__.py               # Pulumi main program (deploys configs)
-├── eos_provider.py           # Custom Pulumi dynamic provider for EOS
+├── __main__.py               # Pulumi main (direct to device)
+├── __main_cv__.py            # Pulumi main (via CloudVision)
+├── eos_provider.py           # Direct deployment provider
+├── cv_provider.py            # CloudVision deployment provider
 ├── inventory.yml             # Device inventory
 ├── group_vars/               # AVD configuration variables
 │   ├── FABRIC.yml           # Fabric-wide settings
@@ -53,6 +56,7 @@ This project demonstrates how to:
 │   └── structured_configs/  # Structured YAML configs
 ├── Makefile                  # Convenience commands
 ├── LICENSE                   # MIT License
+├── DEPLOYMENT_METHODS.md     # Deployment methods comparison
 └── README.md                 # This file
 ```
 
@@ -183,27 +187,42 @@ python build.py  # Standalone config generation
 
 ## 🔍 Key Files
 
-### `__main__.py`
+### Deployment Files
 
-**Integrated Pulumi + PyAVD program** that:
+**Two deployment methods available:**
 
-1. Generates fresh configs using PyAVD (no Ansible!)
-1. Deploys configs to devices using Pulumi
-1. Provides a single command workflow: `pulumi up`
+#### Direct to Device (Default)
+
+- `__main__.py` - Deploys directly to devices via pyeapi
+- `eos_provider.py` - Provider for direct device deployment
+
+#### CloudVision Workflow (Enterprise)
+
+- `__main_cv__.py` - Deploys via CloudVision Portal
+- `cv_provider.py` - Provider for CloudVision deployment
+
+See [DEPLOYMENT_METHODS.md](DEPLOYMENT_METHODS.md) for detailed comparison.
 
 ### `build.py` (Optional)
 
 Standalone Python script for generating configs without deployment.
 Useful for testing or CI/CD pipelines.
 
-### `eos_provider.py`
+### Provider Details
 
-Custom Pulumi dynamic provider that:
+**`eos_provider.py`** (Direct):
 
 - Connects to EOS devices via pyeapi
 - Applies configurations using **config replace** (not merge)
 - Ensures device config exactly matches AVD output
 - Tracks changes for idempotency
+
+**`cv_provider.py`** (CloudVision):
+
+- Deploys via CloudVision Portal
+- Uses PyAVD's cv_workflow module
+- Provides change control and approval workflows
+- Automated rollback and compliance tracking
 
 ## 📚 Resources
 
@@ -211,7 +230,8 @@ Custom Pulumi dynamic provider that:
 - [PyAVD Documentation](https://avd.arista.com/docs/pyavd/)
 - [Pulumi Documentation](https://www.pulumi.com/docs/)
 - [pyeapi Documentation](https://pyeapi.readthedocs.io/)
-- [Config Replace Mode](CONFIG_REPLACE.md) - Understanding config replace vs merge
+- [Deployment Methods](DEPLOYMENT_METHODS.md) - Direct vs CloudVision deployment
+- [Config Replace Mode](CONFIG_REPLACE.md) - Understanding config replace vs merge (direct method)
 
 ## 🤝 Contributing
 

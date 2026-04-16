@@ -13,7 +13,6 @@ clab-lab/
 clab-*/
 
 # AVD generated files
-intended/
 documentation/
 
 # Pulumi

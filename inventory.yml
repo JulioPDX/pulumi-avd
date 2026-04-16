@@ -5,13 +5,17 @@ all:
       children:
         SPINES:
           hosts:
-            spine1:
+            pulumi-spine1:
               ansible_host: 172.16.1.11
-            spine2:
+            pulumi-spine2:
               ansible_host: 172.16.1.12
         LEAFS:
           hosts:
-            leaf1:
+            pulumi-leaf1:
               ansible_host: 172.16.1.101
-            leaf2:
+            pulumi-leaf2:
               ansible_host: 172.16.1.102
+
+        NETWORK_SERVICES:
+          children:
+            LEAFS:

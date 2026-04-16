@@ -8,34 +8,32 @@ enable_password:
   disabled: true
 ethernet_interfaces:
 - name: Ethernet1
-  description: P2P_spine1_Ethernet2
+  description: P2P_pulumi-leaf1_Ethernet1
   shutdown: false
   mtu: 9214
-  ip_address: 10.255.255.5/31
+  ip_address: 10.255.255.0/31
   metadata:
-    peer: spine1
-    peer_interface: Ethernet2
-    peer_type: spine
+    peer: pulumi-leaf1
+    peer_interface: Ethernet1
+    peer_type: l3leaf
   switchport:
     enabled: false
 - name: Ethernet2
-  description: P2P_spine2_Ethernet2
+  description: P2P_pulumi-leaf2_Ethernet1
   shutdown: false
   mtu: 9214
-  ip_address: 10.255.255.7/31
+  ip_address: 10.255.255.4/31
   metadata:
-    peer: spine2
-    peer_interface: Ethernet2
-    peer_type: spine
+    peer: pulumi-leaf2
+    peer_interface: Ethernet1
+    peer_type: l3leaf
   switchport:
     enabled: false
-hostname: leaf2
+hostname: pulumi-spine1
 ip_domain_lookup:
   source_interfaces:
   - name: Management1
     vrf: MGMT
-ip_igmp_snooping:
-  globally_enabled: true
 ip_name_server:
   vrfs:
   - name: MGMT
@@ -43,21 +41,16 @@ ip_name_server:
     - ip_address: 8.8.8.8
     - ip_address: 8.8.4.4
 ip_routing: true
-ip_virtual_router_mac_address: 00:1c:73:00:00:01
 local_users:
 - name: admin
   privilege: 15
   role: network-admin
-  sha512_password: $6$6e7fa9cee634b67a$0asxR/KchiZsHFjLYmTggs7Bdr0aaBwQM7PIkr.F0x69pFC01xlptYXbpiqEGm5E3oIbOgXmGrkmO1l1ipOBV1
+  sha512_password: $6$ca1e78f7aef1e938$KU1x5mm/.qtobiF.pI6k.99NVeCJmYkIqIcv791QZK7M.KXD1LwnAKbOMKRSVCeXEinrXdWtYoh2fCjvlr0HQ1
 loopback_interfaces:
 - name: Loopback0
   description: ROUTER_ID
   shutdown: false
-  ip_address: 10.255.0.4/32
-- name: Loopback1
-  description: VXLAN_TUNNEL_SOURCE
-  shutdown: false
-  ip_address: 10.255.1.4/32
+  ip_address: 10.255.0.1/32
 management_api_http:
   enable_https: true
   enable_vrfs:
@@ -67,7 +60,7 @@ management_interfaces:
   description: OOB_MANAGEMENT
   shutdown: false
   vrf: MGMT
-  ip_address: 172.16.1.102/24
+  ip_address: 172.16.1.11/24
   type: oob
   gateway: 172.16.1.1
 metadata:
@@ -90,8 +83,6 @@ prefix_lists:
   sequence_numbers:
   - sequence: 10
     action: permit 10.255.0.0/27 eq 32
-  - sequence: 20
-    action: permit 10.255.1.0/27 eq 32
 route_maps:
 - name: RM-CONN-2-BGP
   sequence_numbers:
@@ -105,8 +96,8 @@ router_bfd:
     min_rx: 300
     multiplier: 3
 router_bgp:
-  as: '65002'
-  router_id: 10.255.0.4
+  as: '65100'
+  router_id: 10.255.0.1
   maximum_paths:
     paths: 4
   bgp:
@@ -121,36 +112,37 @@ router_bgp:
   - name: EVPN-OVERLAY-PEERS
     metadata:
       type: evpn
+    next_hop_unchanged: true
     update_source: Loopback0
     bfd: true
     ebgp_multihop: 3
     send_community: all
     maximum_routes: 0
   neighbors:
-  - ip_address: 10.255.255.4
+  - ip_address: 10.255.255.1
     peer_group: IPv4-UNDERLAY-PEERS
-    remote_as: '65100'
+    remote_as: '65001'
     metadata:
-      peer: spine1
-    description: spine1_Ethernet2
-  - ip_address: 10.255.255.6
+      peer: pulumi-leaf1
+    description: pulumi-leaf1_Ethernet1
+  - ip_address: 10.255.255.5
     peer_group: IPv4-UNDERLAY-PEERS
-    remote_as: '65100'
+    remote_as: '65002'
     metadata:
-      peer: spine2
-    description: spine2_Ethernet2
-  - ip_address: 10.255.0.1
+      peer: pulumi-leaf2
+    description: pulumi-leaf2_Ethernet1
+  - ip_address: 10.255.0.3
     peer_group: EVPN-OVERLAY-PEERS
-    remote_as: '65100'
+    remote_as: '65001'
     metadata:
-      peer: spine1
-    description: spine1_Loopback0
-  - ip_address: 10.255.0.2
+      peer: pulumi-leaf1
+    description: pulumi-leaf1_Loopback0
+  - ip_address: 10.255.0.4
     peer_group: EVPN-OVERLAY-PEERS
-    remote_as: '65100'
+    remote_as: '65002'
     metadata:
-      peer: spine2
-    description: spine2_Loopback0
+      peer: pulumi-leaf2
+    description: pulumi-leaf2_Loopback0
   redistribute:
     connected:
       enabled: true
@@ -167,10 +159,7 @@ router_bgp:
       activate: false
 service_routing_protocols_model: multi-agent
 spanning_tree:
-  mode: mstp
-  mst_instances:
-  - id: '0'
-    priority: 16384
+  mode: none
 static_routes:
 - vrf: MGMT
   prefix: 0.0.0.0/0
@@ -184,9 +173,3 @@ vlan_internal_order:
 vrfs:
 - name: MGMT
   ip_routing: false
-vxlan_interface:
-  vxlan1:
-    description: leaf2_VTEP
-    vxlan:
-      source_interface: Loopback1
-      udp_port: 4789

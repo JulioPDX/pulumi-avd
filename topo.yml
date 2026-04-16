@@ -18,17 +18,17 @@ topology:
     defaults:
         kind: arista_ceos
     nodes:
-        spine1:
+        pulumi-spine1:
             mgmt-ipv4: 172.16.1.11
-        spine2:
+        pulumi-spine2:
             mgmt-ipv4: 172.16.1.12
-        leaf1:
+        pulumi-leaf1:
             mgmt-ipv4: 172.16.1.101
-        leaf2:
+        pulumi-leaf2:
             mgmt-ipv4: 172.16.1.102
     links:
         # spines to a/b leafs
-        - endpoints: ["spine1:eth1", "leaf1:eth1"]
-        - endpoints: ["spine1:eth2", "leaf2:eth1"]
-        - endpoints: ["spine2:eth1", "leaf1:eth2"]
-        - endpoints: ["spine2:eth2", "leaf2:eth2"]
+        - endpoints: ["pulumi-spine1:eth1", "pulumi-leaf1:eth1"]
+        - endpoints: ["pulumi-spine1:eth2", "pulumi-leaf2:eth1"]
+        - endpoints: ["pulumi-spine2:eth1", "pulumi-leaf1:eth2"]
+        - endpoints: ["pulumi-spine2:eth2", "pulumi-leaf2:eth2"]
