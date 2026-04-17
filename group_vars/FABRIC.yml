@@ -37,15 +37,6 @@ dns_settings:
     - ip_address: 8.8.8.8
     - ip_address: 8.8.4.4
 
-# EVPN Settings
-evpn_ebgp_multihop: 3
-
-# BFD Settings
-bfd_multihop:
-  interval: 300
-  min_rx: 300
-  multiplier: 3
-
 cv_settings:
   cvaas:
     enabled: true
