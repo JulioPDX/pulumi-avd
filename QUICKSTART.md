@@ -6,7 +6,7 @@
 clab deploy -t topo.yml
 ```
 
-## Create .envrc File
+## Create .envrc File (Optional)
 
 ```bash
 export PULUMI_CONFIG_PASSPHRASE=""

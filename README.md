@@ -9,10 +9,8 @@ A complete Python-based network automation solution using Arista AVD (Architect,
 This project demonstrates how to:
 
 - Generate network device configurations using **PyAVD** (pure Python, no Ansible required)
-- Deploy configurations to Arista EOS devices using **Pulumi** or standalone **deploy.py**
-- Three deployment options:
-  - **Pulumi + pyeapi** (state-managed, direct to device)
-  - **deploy.py** (standalone, no Pulumi required)
+- Deploy configurations to Arista EOS devices using **Pulumi**
+- Deploy directly to devices via pyeapi (state-managed, config replace)
 - Manage infrastructure state with idempotent operations
 
 ## 🏗️ Architecture
@@ -44,9 +42,8 @@ This project demonstrates how to:
 ```bash
 .
 ├── build.py                  # PyAVD build script (generates configs)
-├── deploy.py                 # Direct deployment script (no Pulumi)
-├── __main__.py               # Pulumi main (direct to device)
-├── eos_provider.py           # Direct deployment provider
+├── __main__.py               # Pulumi main (integrated build + deploy)
+├── eos_provider.py           # Direct deployment provider (pyeapi)
 ├── inventory.yml             # Device inventory
 ├── group_vars/               # AVD configuration variables
 │   ├── FABRIC.yml           # Fabric-wide settings
@@ -193,12 +190,9 @@ python build.py  # Standalone config generation
 
 ### Deployment Files
 
-**Two deployment methods available:**
-
-#### Direct to Device (Default)
-
-- `__main__.py` - Deploys directly to devices via pyeapi
-- `eos_provider.py` - Provider for direct device deployment
+- **`__main__.py`** - Integrated PyAVD build + Pulumi deployment
+- **`eos_provider.py`** - Custom Pulumi provider for EOS devices (pyeapi)
+- **`build.py`** - Standalone config generator (optional)
 
 ## 🤝 Contributing
 
