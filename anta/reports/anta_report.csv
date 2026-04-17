@@ -1,16 +1,62 @@
 Device,Test Name,Test Status,Message(s),Test description,Test category
-pulumi-leaf1,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 40,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
-pulumi-leaf1,VerifyLoggingErrors,failure,"Device has reported syslog messages with a severity of ERRORS or higher:
-Apr 16 21:55:53 pulumi-leaf1 NorCalInit: %HARDWARE-0-SYSTEM_IDENTIFICATION_FAILED: Failed to identify this system
- 
-",Verifies there are no syslog messages with a severity of ERRORS or higher.,Logging
-pulumi-leaf2,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 39,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
-pulumi-spine1,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 38,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
-pulumi-spine1,VerifyLoggingErrors,failure,"Device has reported syslog messages with a severity of ERRORS or higher:
-Apr 16 21:55:53 pulumi-spine1 NorCalInit: %HARDWARE-0-SYSTEM_IDENTIFICATION_FAILED: Failed to identify this system
- 
-",Verifies there are no syslog messages with a severity of ERRORS or higher.,Logging
-pulumi-spine2,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 39,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
+pulumi-leaf1,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 848,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
+pulumi-leaf2,VerifyRunningConfigDiffs,failure,"--- flash:/startup-config
++++ system:/running-config
+@@ -34,6 +34,9 @@
+    unsupported speed action error
+    unsupported error-correction action error
+ !
++vlan 11
++   name VRF10_VLAN11
++!
+ vlan 12
+    name VRF10_VLAN12
+ !
+@@ -68,6 +71,11 @@
+    vrf MGMT
+    ip address 172.16.1.102/24
+ !
++interface Vlan11
++   description VRF10_VLAN11
++   vrf VRF10
++   ip address virtual 10.10.11.1/24
++!
+ interface Vlan12
+    description VRF10_VLAN12
+    vrf VRF10
+@@ -77,6 +85,7 @@
+    description pulumi-leaf2_VTEP
+    vxlan source-interface Loopback1
+    vxlan udp-port 4789
++   vxlan vlan 11 vni 10011
+    vxlan vlan 12 vni 10012
+    vxlan vrf VRF10 vni 10
+ !
+@@ -101,7 +110,7 @@
+ router bfd
+    multihop interval 300 min-rx 300 multiplier 3
+ !
+-router bgp 65003
++router bgp 65002
+    router-id 10.255.0.4
+    no bgp default ipv4-unicast
+    maximum-paths 4
+@@ -128,6 +137,11 @@
+    neighbor 10.255.255.6 description pulumi-spine2_Ethernet2
+    redistribute connected route-map RM-CONN-2-BGP
+    !
++   vlan 11
++      rd 10.255.0.4:10011
++      route-target both 10011:10011
++      redistribute learned
++   !
+    vlan 12
+       rd 10.255.0.4:10012
+       route-target both 10012:10012
+",Verifies there is no difference between the running-config and the startup-config.,Configuration
+pulumi-leaf2,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 849,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
+pulumi-spine1,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 848,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
+pulumi-spine2,VerifyInterfaceDiscards,failure,Interface: Management1 - Non-zero discard counter(s): inDiscards: 848,Verifies that the interfaces packet discard counters are equal to zero.,Interfaces
 pulumi-leaf1,VerifyBGPPeerSession,success,,Verifies the session state of BGP peers.,BGP
 pulumi-leaf1,VerifyRunningConfigDiffs,success,,Verifies there is no difference between the running-config and the startup-config.,Configuration
 pulumi-leaf1,VerifyZeroTouch,success,,Verifies ZeroTouch is disabled.,Configuration
@@ -20,6 +66,7 @@ pulumi-leaf1,VerifyInterfaceErrDisabled,success,,Verifies there are no interface
 pulumi-leaf1,VerifyInterfaceErrors,success,,Verifies that the interfaces error counters are equal to zero.,Interfaces
 pulumi-leaf1,VerifyInterfaceUtilization,success,,Verifies that the utilization of interfaces is below a certain threshold.,Interfaces
 pulumi-leaf1,VerifyInterfacesStatus,success,,Verifies the operational states of specified interfaces to ensure they match expected configurations.,Interfaces
+pulumi-leaf1,VerifyLoggingErrors,success,,Verifies there are no syslog messages with a severity of ERRORS or higher.,Logging
 pulumi-leaf1,VerifyRoutingProtocolModel,success,,Verifies the configured routing protocol model.,Routing
 pulumi-leaf1,VerifySTPCounters,success,,Verifies there is no errors in STP BPDU packets.,STP
 pulumi-leaf1,VerifyAgentLogs,success,,Verifies there are no agent crash reports.,System
@@ -31,7 +78,6 @@ pulumi-leaf1,VerifyNTP,success,,Verifies if NTP is synchronised.,System
 pulumi-leaf1,VerifyReloadCause,success,,Verifies the last reload cause of the device.,System
 pulumi-leaf1,VerifyVxlanConfigSanity,success,,Verifies there are no VXLAN config-sanity inconsistencies.,VXLAN
 pulumi-leaf2,VerifyBGPPeerSession,success,,Verifies the session state of BGP peers.,BGP
-pulumi-leaf2,VerifyRunningConfigDiffs,success,,Verifies there is no difference between the running-config and the startup-config.,Configuration
 pulumi-leaf2,VerifyZeroTouch,success,,Verifies ZeroTouch is disabled.,Configuration
 pulumi-leaf2,VerifyLLDPNeighbors,success,,Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.,Connectivity
 pulumi-leaf2,VerifyReachability,success,,Verifies point-to-point reachability between Ethernet interfaces.,Connectivity
@@ -59,6 +105,7 @@ pulumi-spine1,VerifyInterfaceErrDisabled,success,,Verifies there are no interfac
 pulumi-spine1,VerifyInterfaceErrors,success,,Verifies that the interfaces error counters are equal to zero.,Interfaces
 pulumi-spine1,VerifyInterfaceUtilization,success,,Verifies that the utilization of interfaces is below a certain threshold.,Interfaces
 pulumi-spine1,VerifyInterfacesStatus,success,,Verifies the operational states of specified interfaces to ensure they match expected configurations.,Interfaces
+pulumi-spine1,VerifyLoggingErrors,success,,Verifies there are no syslog messages with a severity of ERRORS or higher.,Logging
 pulumi-spine1,VerifyRoutingProtocolModel,success,,Verifies the configured routing protocol model.,Routing
 pulumi-spine1,VerifySTPCounters,success,,Verifies there is no errors in STP BPDU packets.,STP
 pulumi-spine1,VerifyAgentLogs,success,,Verifies there are no agent crash reports.,System
